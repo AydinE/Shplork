@@ -7,7 +7,8 @@ namespace ConsoleAppjeMaandag
     class Room
     {
 
-        public string roomName { get; set; }
+        public string RoomName { get; set; }
+        public string Description { get; set; }
 
     }
 }
