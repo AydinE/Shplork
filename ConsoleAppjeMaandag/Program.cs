@@ -11,8 +11,7 @@ namespace ConsoleAppjeMaandag
             Console.ForegroundColor = ConsoleColor.White;
             Console.BackgroundColor = ConsoleColor.DarkBlue;
             Console.Clear();
-            Game game = new Game();
-            game.StartGame();
+            Game.StartGame();
             Console.ReadKey();
         }
 

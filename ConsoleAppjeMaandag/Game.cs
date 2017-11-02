@@ -4,29 +4,30 @@ using System.Text;
 
 namespace ConsoleAppjeMaandag
 {
-    public class Game
+    public static class Game
     {
 
-        private string _startTime { get; set; }
+        private static DateTime _startTime { get; set; }
+        public static Room currentRoom;
 
-        public void StartGame()
+        public static void StartGame()
         {
             Initialize();
             Start();
         }
 
-        private void End()
+        public static void End()
         {
             Console.WriteLine("");
             Console.WriteLine("Bedankt voor het spelen van SHPLORK!");
+            Console.WriteLine("je uiteindelijke score was: {0}", Player.Level);
             Console.ReadKey();
             Environment.Exit(2);
         }
 
-        private void Start()
+        private static void Start()
         {
             Console.Clear();
-            Player player = new Player();
 
             Console.WriteLine(@"
                   _  _ _                       ___           _         
@@ -43,7 +44,7 @@ namespace ConsoleAppjeMaandag
             string firstName = Console.ReadLine();
             if (firstName.Length > 0)
             {
-                player.FirstName = firstName;
+                Player.FirstName = firstName;
             }
             else
             {
@@ -54,41 +55,37 @@ namespace ConsoleAppjeMaandag
             string lastName = Console.ReadLine();
             if (lastName.Length > 0)
             {
-                player.LastName = lastName;
+                Player.LastName = lastName;
             }
             else
             {
                 Error.ErrorMessage("Geen geldige achternaam.");
                 Start();
-            }           
-
-            Console.WriteLine($"Hallo {player.FirstName} van de familie {player.LastName}, je huidige level is {player.Level}. ");
-
-            GetCommand();
-        }
-
-        private void GetCommand()
-        {
-            string command = Console.ReadLine();
-
-            switch (command)
-            {
-                case "help":
-                    Help.Helper();
-                    break;
-                case "suicide":
-                    End();
-                    break;
-                default:
-                    Console.WriteLine("Geen geldig commando, voer \"help\" in voor een lijst met geldige commando's");
-                    break;
             }
 
+            Player.Level = 1;
+
+            // Initialize levels
+            GameLevels gameLevels = new GameLevels();
+            gameLevels.InitializeLevels();
+
+            Console.WriteLine($"Hallo {Player.FirstName} van de familie {Player.LastName}, je huidige level is {Player.Level}. ");
+            
+            // Initialize command helper
+            CommandHandler commandHandler = new CommandHandler();
+            commandHandler.GetCommand();
+
+        }
+
+        private static void GetCommand()
+        {
+            
+
             GetCommand();
 
         }
 
-        private void Initialize()
+        private static void Initialize()
         {
 
             Console.WriteLine(@"

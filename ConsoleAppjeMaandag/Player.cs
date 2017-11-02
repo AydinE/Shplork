@@ -4,12 +4,12 @@ using System.Text;
 
 namespace ConsoleAppjeMaandag
 {
-    class Player
+    static class Player
     {
 
-        public string FirstName { get; set; }
-        public string LastName { get; set; }
-        public int Level { get; set; }
+        public static string FirstName { get; set; }
+        public static string LastName { get; set; }
+        public static int Level { get; set; }
 
     }
 }
