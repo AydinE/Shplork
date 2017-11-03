@@ -9,7 +9,10 @@ namespace ConsoleAppjeMaandag.Commands
 
         public static void Move(string subCommand)
         {
-            switch (subCommand)
+
+            string ignoredCase = subCommand.ToLower();
+
+            switch (ignoredCase)
             {
                 case "north":
                     if ( Game.currentRoom.NorthConnection != null)

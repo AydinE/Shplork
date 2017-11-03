@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ConsoleAppjeMaandag.Monsters
 {
-    class Spider : Killable
+    public class Spider : Killable
     {
         
     }

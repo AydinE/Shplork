@@ -17,8 +17,8 @@ namespace ConsoleAppjeMaandag
 
         public Room castleEntrance = new Room
         {
-            RoomName = "Courtyard",
-            Description = "This is the courtyard",
+            RoomName = "Castle Entrance",
+            Description = "This is the castle entrance",
 
         };
 
@@ -30,6 +30,9 @@ namespace ConsoleAppjeMaandag
 
             courtyard.NorthConnection = castleEntrance;
             castleEntrance.SouthConnection = courtyard;
+
+            Game.currentRoom.monster = new Monsters.Spider();
+
         }
 
 

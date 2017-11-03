@@ -7,6 +7,8 @@ namespace ConsoleAppjeMaandag
     public class Room
     {
 
+        public Killable monster;
+
         public Room NorthConnection = null;
         public Room EastConnection = null;
         public Room SouthConnection = null;
