@@ -9,11 +9,18 @@ namespace HotelKamers.Models
     public class Room
     {
         public int ID { get; set; }
+
+        [StringLength(60, MinimumLength = 5)]
+        [Required]
         public string Name { get; set; }
 
         [Display(Name = "Available from")]
-        [DataType(DataType.Date)]
+        [DataType(DataType.DateTime)]
+        [Required]
         public DateTime AvailableFrom { get; set; }
+
+        [Range(0, 1)]
+        [Required]
         public RoomType Type { get; set; }
     }
 }

@@ -12,9 +12,10 @@ using System;
 namespace HotelKamers.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171107125113_BookingStuffAgainLolLol")]
+    partial class BookingStuffAgainLolLol
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,10 +36,6 @@ namespace HotelKamers.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
-
-                    b.Property<string>("FirstName");
-
-                    b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -83,8 +80,9 @@ namespace HotelKamers.Data.Migrations
 
                     b.Property<DateTime>("EndDateTime");
 
-                    b.Property<string>("GuestId")
-                        .IsRequired();
+                    b.Property<int>("GuestId");
+
+                    b.Property<string>("GuestId1");
 
                     b.Property<int>("RoomId");
 
@@ -92,7 +90,7 @@ namespace HotelKamers.Data.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GuestId");
+                    b.HasIndex("GuestId1");
 
                     b.HasIndex("RoomId");
 
@@ -229,8 +227,7 @@ namespace HotelKamers.Data.Migrations
                 {
                     b.HasOne("HotelKamers.Models.ApplicationUser", "Guest")
                         .WithMany()
-                        .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("GuestId1");
 
                     b.HasOne("HotelKamers.Models.Room", "Room")
                         .WithMany()

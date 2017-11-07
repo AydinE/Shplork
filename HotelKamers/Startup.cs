@@ -29,7 +29,15 @@ namespace HotelKamers
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
-            services.AddIdentity<ApplicationUser, IdentityRole>()
+            services.AddIdentity<ApplicationUser, IdentityRole>(options =>
+                {
+                    options.Password.RequireDigit = false;
+                    options.Password.RequireUppercase = false;
+                    options.Password.RequireNonAlphanumeric = false;
+                    options.Password.RequiredLength = 2;
+                    options.Password.RequiredUniqueChars = 1;
+                    options.Password.RequireLowercase = false;
+                })
                 .AddEntityFrameworkStores<ApplicationDbContext>()
                 .AddDefaultTokenProviders();
 

@@ -12,9 +12,10 @@ using System;
 namespace HotelKamers.Data.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20171107115538_BookingStuffAgain")]
+    partial class BookingStuffAgain
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -35,10 +36,6 @@ namespace HotelKamers.Data.Migrations
                         .HasMaxLength(256);
 
                     b.Property<bool>("EmailConfirmed");
-
-                    b.Property<string>("FirstName");
-
-                    b.Property<string>("LastName");
 
                     b.Property<bool>("LockoutEnabled");
 
@@ -83,18 +80,19 @@ namespace HotelKamers.Data.Migrations
 
                     b.Property<DateTime>("EndDateTime");
 
-                    b.Property<string>("GuestId")
-                        .IsRequired();
-
-                    b.Property<int>("RoomId");
-
                     b.Property<DateTime>("StartDateTime");
+
+                    b.Property<int>("guestId");
+
+                    b.Property<string>("guestId1");
+
+                    b.Property<int>("roomId");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("GuestId");
+                    b.HasIndex("guestId1");
 
-                    b.HasIndex("RoomId");
+                    b.HasIndex("roomId");
 
                     b.ToTable("Booking");
                 });
@@ -227,14 +225,13 @@ namespace HotelKamers.Data.Migrations
 
             modelBuilder.Entity("HotelKamers.Models.Booking", b =>
                 {
-                    b.HasOne("HotelKamers.Models.ApplicationUser", "Guest")
+                    b.HasOne("HotelKamers.Models.ApplicationUser", "guest")
                         .WithMany()
-                        .HasForeignKey("GuestId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                        .HasForeignKey("guestId1");
 
-                    b.HasOne("HotelKamers.Models.Room", "Room")
+                    b.HasOne("HotelKamers.Models.Room", "room")
                         .WithMany()
-                        .HasForeignKey("RoomId")
+                        .HasForeignKey("roomId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
