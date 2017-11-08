@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@inject SignInManager<ApplicationUser> SignInManager
+
+<!DOCTYPE html>
 <html>
 <head>
     <meta charset="utf-8" />
@@ -34,7 +36,13 @@
                     <li><a asp-area="" asp-controller="Home" asp-action="About">About</a></li>
                     <li><a asp-area="" asp-controller="Home" asp-action="Contact">Contact</a></li>
                     <li><a asp-area="" asp-controller="Rooms" asp-action="Index">Rooms</a></li>
-                    <li><a asp-area="" asp-controller="Bookings" asp-action="Index">Bookings</a></li>
+                    @if (SignInManager.IsSignedIn(User))
+                    {
+                        if (User.IsInRole("Receptionist"))
+                        {
+                            <li><a asp-area="" asp-controller="Bookings" asp-action="Index">Bookings</a></li>
+                        }
+                    }
                 </ul>
                 @await Html.PartialAsync("_LoginPartial")
             </div>

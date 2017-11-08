@@ -7,9 +7,11 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HotelKamers.Data;
 using HotelKamers.Models;
+using Microsoft.AspNetCore.Authorization;
 
 namespace HotelKamers.Controllers
 {
+
     public class RoomsController : Controller
     {
         private readonly ApplicationDbContext _context;
@@ -22,6 +24,7 @@ namespace HotelKamers.Controllers
         // GET: Rooms
         public async Task<IActionResult> Index(string searchString)
         {
+
             var rooms = from r in _context.Room
                 select r;
 
@@ -52,6 +55,7 @@ namespace HotelKamers.Controllers
         }
 
         // GET: Rooms/Create
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public IActionResult Create()
         {
             return View();
@@ -62,6 +66,7 @@ namespace HotelKamers.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public async Task<IActionResult> Create([Bind("ID,Name,AvailableFrom,Type")] Room room)
         {
             if (ModelState.IsValid)
@@ -74,6 +79,7 @@ namespace HotelKamers.Controllers
         }
 
         // GET: Rooms/Edit/5
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -94,6 +100,7 @@ namespace HotelKamers.Controllers
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public async Task<IActionResult> Edit(int id, [Bind("ID,Name,AvailableFrom,Type")] Room room)
         {
             if (id != room.ID)
@@ -125,6 +132,7 @@ namespace HotelKamers.Controllers
         }
 
         // GET: Rooms/Delete/5
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,6 +153,7 @@ namespace HotelKamers.Controllers
         // POST: Rooms/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
+        [Authorize(Roles = "HotelManager, Receptionist")]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var room = await _context.Room.SingleOrDefaultAsync(m => m.ID == id);
