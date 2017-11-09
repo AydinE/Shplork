@@ -7,30 +7,35 @@ using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using HotelKamers.Data;
 using HotelKamers.Models;
+using HotelKamers.Models.BookingViewModels;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 
 namespace HotelKamers.Controllers
 {
 
-    [Authorize(Roles = "HotelManager, Receptionist")]
-    public class BookingsController : Controller
+    [Authorize]
+    public class BookingsGuestController : Controller
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserManager<ApplicationUser> _userManager;
 
-        public BookingsController(ApplicationDbContext context)
+        public BookingsGuestController(ApplicationDbContext context, UserManager<ApplicationUser> userManager)
         {
             _context = context;
+            _userManager = userManager;
         }
 
-        // GET: Bookings
+        // GET: BookingsGuest
         public async Task<IActionResult> Index()
-        {
-            var applicationDbContext = _context.Booking.Include(b => b.Room).Include(g => g.Guest);
+        { 
+            ApplicationUser user = await _userManager.GetUserAsync(User);
+            var applicationDbContext = _context.Booking.Include(b => b.Guest).Include(b => b.Room).Where(b => b.Guest == user);
+
             return View(await applicationDbContext.ToListAsync());
         }
 
-        // GET: Bookings/Details/5
+        // GET: BookingsGuest/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
@@ -39,6 +44,7 @@ namespace HotelKamers.Controllers
             }
 
             var booking = await _context.Booking
+                .Include(b => b.Guest)
                 .Include(b => b.Room)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (booking == null)
@@ -49,40 +55,51 @@ namespace HotelKamers.Controllers
             return View(booking);
         }
 
-        // GET: Bookings/Create
+        // GET: BookingsGuest/Create
         public IActionResult Create()
         {
-            ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name");
-            ViewData["GuestId"] = new SelectList(_context.Users, "Id", "FullName");
-            
+            //ViewData["GuestId"] = new SelectList(_context.Users, "Id", "Id");
+            ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Type");
             return View();
         }
 
-        // POST: Bookings/Create
+        // POST: BookingsGuest/Create
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,RoomId,GuestId,StartDateTime,EndDateTime")] Booking booking)
+        public async Task<IActionResult> Create([Bind("Id,RoomId,GuestId,StartDateTime,EndDateTime")] GuestCreateViewModel createViewModel)
         {
+            ApplicationUser user = await _userManager.GetUserAsync(User);
+            //createViewModel.GuestId = user.Id;
+
+            //Room type validation
+            //RoomType roomType = booking.Room.Type;
+
+            var stuff = await _context.Room.ToListAsync();
+
+            List<Room> roomList = new List<Room>();
+
+            foreach (Room r in stuff)
+            {
+                if (r.Type == createViewModel.RoomType)
+                {
+                    roomList.Add(r);
+                }
+            }
+
             if (ModelState.IsValid)
             {
-                if (string.IsNullOrWhiteSpace(booking.GuestId))
-                {
-                    ModelState.AddModelError("GuestId", "Je mot een guest selecteren!");
-                    ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
-                    return View(booking);
-                }
-
-                _context.Add(booking);
-                await _context.SaveChangesAsync();
+                //_context.Add(booking);
+                //await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
-            return View(booking);
+
+            //ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
+            return View();
         }
 
-        // GET: Bookings/Edit/5
+        // GET: BookingsGuest/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
@@ -95,12 +112,12 @@ namespace HotelKamers.Controllers
             {
                 return NotFound();
             }
+            ViewData["GuestId"] = new SelectList(_context.Users, "Id", "Id", booking.GuestId);
             ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
-            ViewData["GuestId"] = new SelectList(_context.Users, "Id", "FullName");
             return View(booking);
         }
 
-        // POST: Bookings/Edit/5
+        // POST: BookingsGuest/Edit/5
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for 
         // more details see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
@@ -132,11 +149,12 @@ namespace HotelKamers.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["GuestId"] = new SelectList(_context.Users, "Id", "Id", booking.GuestId);
             ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
             return View(booking);
         }
 
-        // GET: Bookings/Delete/5
+        // GET: BookingsGuest/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
@@ -145,6 +163,7 @@ namespace HotelKamers.Controllers
             }
 
             var booking = await _context.Booking
+                .Include(b => b.Guest)
                 .Include(b => b.Room)
                 .SingleOrDefaultAsync(m => m.Id == id);
             if (booking == null)
@@ -155,7 +174,7 @@ namespace HotelKamers.Controllers
             return View(booking);
         }
 
-        // POST: Bookings/Delete/5
+        // POST: BookingsGuest/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)

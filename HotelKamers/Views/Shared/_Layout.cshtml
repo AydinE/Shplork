@@ -38,9 +38,13 @@
                     <li><a asp-area="" asp-controller="Rooms" asp-action="Index">Rooms</a></li>
                     @if (SignInManager.IsSignedIn(User))
                     {
-                        if (User.IsInRole("Receptionist"))
+                        if (User.IsInRole("Receptionist") || User.IsInRole("HotelManager"))
                         {
                             <li><a asp-area="" asp-controller="Bookings" asp-action="Index">Bookings</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="" asp-controller="BookingsGuest" asp-action="Index">Bookings</a></li>
                         }
                     }
                 </ul>

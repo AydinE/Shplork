@@ -4,17 +4,13 @@ using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace HotelKamers.Models
+namespace HotelKamers.Models.BookingViewModels
 {
-    public class Booking
+    public class GuestCreateViewModel
     {
-        public int Id { get; set; }
 
-        public Room Room { get; set; }
-        public int RoomId { get; set; }
-
-        public ApplicationUser Guest { get; set; }
-        public string GuestId { get; set; }
+        [Required]
+        public RoomType RoomType { get; set; }
 
         [Display(Name = "From: ")]
         [DataType(DataType.DateTime)]
@@ -25,5 +21,6 @@ namespace HotelKamers.Models
         [DataType(DataType.DateTime)]
         [Required]
         public DateTime EndDateTime { get; set; }
+
     }
 }
