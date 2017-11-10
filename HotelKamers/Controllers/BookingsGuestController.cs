@@ -70,32 +70,108 @@ namespace HotelKamers.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("Id,RoomId,GuestId,StartDateTime,EndDateTime")] GuestCreateViewModel createViewModel)
         {
-            ApplicationUser user = await _userManager.GetUserAsync(User);
-            //createViewModel.GuestId = user.Id;
 
-            //Room type validation
-            //RoomType roomType = booking.Room.Type;
+            if (!(createViewModel.StartDateTime > DateTime.Now &&
+                createViewModel.EndDateTime > createViewModel.StartDateTime))
+            {
+                ModelState.AddModelError("StartDateTime", "Not a valid date!");
+                ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Type");
+                return View();
+            }
+
+            ApplicationUser user = await _userManager.GetUserAsync(User);
 
             var stuff = await _context.Room.ToListAsync();
 
             List<Room> roomList = new List<Room>();
 
+            foreach (var r in roomList)
+            {
+                roomList.Add(r);
+            }
+
+
             foreach (Room r in stuff)
             {
                 if (r.Type == createViewModel.RoomType)
                 {
-                    roomList.Add(r);
+
+                    var bookingStuff = await _context.Booking.ToListAsync();
+
+                    foreach (Booking b in bookingStuff)
+                    {
+                        // Startdate between startdate and enddate of existing booking
+                        if (createViewModel.StartDateTime >= b.StartDateTime && createViewModel.StartDateTime <= b.EndDateTime)
+                        {
+                            if(roomList.Contains(r))
+                            {
+                                roomList.Remove(r);
+                            }
+                            continue;
+                        }
+
+                        // Enddate between startdate and enddate of existing booking
+                        if (createViewModel.EndDateTime >= b.StartDateTime && createViewModel.EndDateTime <= b.EndDateTime)
+                        {
+                            if(roomList.Contains(r))
+                            {
+                                roomList.Remove(r);
+                            }
+                            continue;
+                        }
+
+                        // Start and enddate outside of existing booking
+                        if (createViewModel.StartDateTime <= b.StartDateTime && createViewModel.EndDateTime >= b.EndDateTime)
+                        {
+                            if(roomList.Contains(r))
+                            {
+                                roomList.Remove(r);
+                            }
+                            continue;
+                        }
+
+                        // Start and enddate inside of existing booking
+                        if (createViewModel.StartDateTime >= b.StartDateTime && createViewModel.EndDateTime <= b.EndDateTime)
+                        {
+                            if(roomList.Contains(r))
+                            {
+                                roomList.Remove(r);
+                            }
+                            continue;
+                        }
+
+                        // If room is the same as the current room.
+//                        if (b.Room.Equals(r))
+//                        {
+//                            continue;
+//                        }
+
+                    }
+
                 }
             }
 
+            // If list is empty notify user no rooms are available
+            if (roomList.Count == 0)
+            {
+                ModelState.AddModelError("RoomType", "No room available of this type for the given time period!");
+                ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Type");
+                return View();
+            }
+
+            // If model is valid create a booking and save it to the DB.
             if (ModelState.IsValid)
             {
-                //_context.Add(booking);
-                //await _context.SaveChangesAsync();
+                Booking booking = new Booking();
+                booking.GuestId = user.Id;
+                booking.RoomId = roomList[0].ID;
+                booking.StartDateTime = createViewModel.StartDateTime;
+                booking.EndDateTime = createViewModel.EndDateTime;
+                _context.Add(booking);
+                await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
 
-            //ViewData["RoomId"] = new SelectList(_context.Room, "ID", "Name", booking.RoomId);
             return View();
         }
 
